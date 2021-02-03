@@ -8,14 +8,16 @@ trigger:
 
 variables:
 - group: 'CommonVariables'
-
-  solution: '**/*.sln'
-  buildPlatform: 'Any CPU'
-  buildConfiguration: 'Release'
-  poolVmImage: 'windows-latest'
-  customerAPIZipfileName: 'CustomersAPI.zip'
-  customerAPIArtifactName: 'CustomersAPIArtifacts'
-  serviceConnection: 'azureconnection' 
+- name: solution
+  value: 'src/api/Contoso.Customer/*.sln'
+- name: poolVmImage
+  value: 'windows-latest'
+- name: customerAPIZipfileName
+  value: 'CustomersAPI.zip'
+- name: customerAPIArtifactName
+  value: 'CustomersAPIArtifacts'
+- name: serviceConnection
+  value: 'azureconnection'
 
 
 stages:
@@ -30,6 +32,9 @@ stages:
       steps:
       - task: NuGetToolInstaller@1
 
+      - bash: |
+          echo "$(SQLConnectionString)"
+
       - task: NuGetCommand@2
         inputs:
           restoreSolution: '$(solution)'
@@ -39,8 +44,8 @@ stages:
         inputs:
           solution: '$(solution)'
           msbuildArgs: '/p:DeployOnBuild=true /p:WebPublishMethod=Package /p:PackageAsSingleFile=true /p:SkipInvalidConfigurations=true /p:DesktopBuildPackageLocation="$(build.artifactStagingDirectory)\$(customerAPIZipfileName)" /p:DeployIisAppPath="Default Web Site"'
-          platform: '$(buildPlatform)'
-          configuration: '$(buildConfiguration)'
+          platform: 'Any CPU'
+          configuration: 'Release'
        
       # Publish the projects zip file as an artifact of this build      
       - task: PublishPipelineArtifact@1
@@ -81,4 +86,5 @@ stages:
                 WebAppName: '$(customersAPIName)'
                 ResourceGroupName: '$(resourceGroupName)'
                 packageForLinux: '$(Pipeline.Workspace)/$(customerAPIArtifactName)/$(customerAPIZipfileName)'
-                AppSettings: '-App:Environment $(environmentname)'
+    
+
