@@ -1,0 +1,84 @@
+# ASP.NET Core (.NET Framework)
+# Build and test ASP.NET Core projects targeting the full .NET Framework.
+# Add steps that publish symbols, save build artifacts, and more:
+# https://docs.microsoft.com/azure/devops/pipelines/languages/dotnet-core
+
+trigger:
+- master
+
+variables:
+- group: 'CommonVariables'
+
+  solution: '**/*.sln'
+  buildPlatform: 'Any CPU'
+  buildConfiguration: 'Release'
+  poolVmImage: 'windows-latest'
+  customerAPIZipfileName: 'CustomersAPI.zip'
+  customerAPIArtifactName: 'CustomersAPIArtifacts'
+  serviceConnection: 'azureconnection' 
+
+
+stages:
+- stage: Build
+  displayName: Build Stage
+  
+  jobs:
+    - job: BuildCustomersAPI
+      displayName: Build Customers API Job
+      pool:
+        vmImage: $(poolVmImage)
+      steps:
+      - task: NuGetToolInstaller@1
+
+      - task: NuGetCommand@2
+        inputs:
+          restoreSolution: '$(solution)'
+
+      # Build the project in release configuration and package it in a zip file in the build artifacts staging directory
+      - task: VSBuild@1
+        inputs:
+          solution: '$(solution)'
+          msbuildArgs: '/p:DeployOnBuild=true /p:WebPublishMethod=Package /p:PackageAsSingleFile=true /p:SkipInvalidConfigurations=true /p:DesktopBuildPackageLocation="$(build.artifactStagingDirectory)\$(customerAPIZipfileName)" /p:DeployIisAppPath="Default Web Site"'
+          platform: '$(buildPlatform)'
+          configuration: '$(buildConfiguration)'
+       
+      # Publish the projects zip file as an artifact of this build      
+      - task: PublishPipelineArtifact@1
+        inputs:
+          targetPath: '$(Build.ArtifactStagingDirectory)'
+          artifact: '$(customerAPIArtifactName)'
+          publishLocation: 'pipeline'
+       
+
+- stage: DeployToProd
+  displayName: Gated Deploy Prod
+  dependsOn: 
+  - Build
+  jobs:
+    - deployment: 'ProdCustomersAPIDeployment'
+      displayName: 'Prod Customer API Deployment Job'
+      pool: 
+        vmImage: $(poolVmImage)
+      environment: 'prod'
+      strategy:
+        runOnce:
+          deploy:
+            steps:
+            
+            # Download the zip file of the built website
+            - task: DownloadPipelineArtifact@2
+              inputs:
+                buildType: 'current'
+                artifactName: '$(customerAPIArtifactName)'
+                targetPath: '$(Pipeline.Workspace)'
+           
+            # Deploy the application to the main slot and override app settings
+            - task: AzureRmWebAppDeployment@4
+              inputs:
+                ConnectionType: 'AzureRM'
+                azureSubscription: '$(serviceConnection)'
+                appType: 'webApp'
+                WebAppName: '$(customersAPIName)'
+                ResourceGroupName: '$(resourceGroupName)'
+                packageForLinux: '$(Pipeline.Workspace)/$(customerAPIArtifactName)/$(customerAPIZipfileName)'
+                AppSettings: '-App:Environment $(environmentname)'
