@@ -13,6 +13,18 @@
             "metadata": {
                 "description": "The value to store in Key Vault for the web app to display"
             }
+        },
+        "sqlAdministratorLogin": {
+            "type": "string",
+            "metadata": {
+                "description": "The admin user of the SQL Server"
+                }
+        },
+        "sqlAdministratorLoginPassword": {
+            "type": "securestring",
+            "metadata": {
+                "description": "The password of the admin user of the SQL Server"
+            }
         }
     },
     "variables": {
@@ -20,25 +32,74 @@
         "windowsPlanName": "[concat(parameters('resourceName'), 'windowsPlan')]",
         "customersAPI": "[concat(parameters('resourceName'), 'customers')]",
         "vaultName": "[concat(parameters('resourceName'), 'vault')]",
-        "secretName": "secret"
+        "secretName": "secret",
+        "sqlserverName": "[concat(parameters('resourceName'),'sqlserver')]",
+        "databaseName": "insurance"
     },
     "resources": 
     [
         {
-        "apiVersion": "2015-08-01",
-        "name": "[variables('linuxPlanName')]",
-        "type": "Microsoft.Web/serverfarms",
-        "location": "[resourceGroup().location]",
-        "tags": {
-            "displayName": "HostingPlan"
+            "name": "[variables('sqlserverName')]",
+            "type": "Microsoft.Sql/servers",
+            "location": "[resourceGroup().location]",
+            "tags": {
+                "displayName": "SqlServer"
+            },
+            "apiVersion": "2020-02-02-preview",
+            "properties": {
+                "administratorLogin": "[parameters('sqlAdministratorLogin')]",
+                "administratorLoginPassword": "[parameters('sqlAdministratorLoginPassword')]",
+                "version": "12.0"
+            },
+            "resources": [
+                {
+                    "name": "[variables('databaseName')]",
+                    "type": "databases",
+                    "location": "[resourceGroup().location]",
+                    "tags": {
+                        "displayName": "Database"
+                    },
+                    "apiVersion": "2020-02-02-preview",
+                    "dependsOn": [
+                        "[variables('sqlserverName')]"
+                    ],
+                    "properties": {
+                        "edition": "Basic",
+                        "collation": "SQL_Latin1_General_CP1_CI_AS",
+                        "maxSizeBytes": "1073741824",
+                        "requestedServiceObjectiveName": "Basic"
+                    }
+                },
+                {
+                    "type": "firewallrules",
+                    "apiVersion": "2020-02-02-preview",
+                    "dependsOn": [
+                        "[variables('sqlserverName')]"
+                    ],
+                    "location": "[resourceGroup().location]",
+                    "name": "AllowAllWindowsAzureIps",
+                    "properties": {
+                        "endIpAddress": "0.0.0.0",
+                        "startIpAddress": "0.0.0.0"
+                    }
+                }
+            ]
         },
-        "sku": {
-            "name": "S1",
-            "capacity": 1
-        },
-        "properties": {
-            "name": "[variables('linuxPlanName')]"
-        }
+        {
+            "apiVersion": "2015-08-01",
+            "name": "[variables('linuxPlanName')]",
+            "type": "Microsoft.Web/serverfarms",
+            "location": "[resourceGroup().location]",
+            "tags": {
+                "displayName": "HostingPlan"
+            },
+            "sku": {
+                "name": "S1",
+                "capacity": 1
+            },
+            "properties": {
+                "name": "[variables('linuxPlanName')]"
+            }
         },
         {
             "apiVersion": "2015-08-01",
@@ -62,8 +123,8 @@
             "siteConfig": {
                 "appSettings": [
                     {
-                        "name": "App:Secret",
-                        "value": "[concat('@Microsoft.KeyVault(SecretUri=', reference(resourceId('Microsoft.KeyVault/vaults/secrets', variables('vaultName'), variables('secretName'))).secretUriWithVersion, ')')]"
+                        "name": "ConnectionStrings:DefaultConnection",
+                        "value": "[concat('@Microsoft.KeyVault(SecretUri=', reference(resourceId('Microsoft.KeyVault/vaults/secrets', variables('vaultName'), 'SQLConnectionString')).secretUriWithVersion, ')')]"
                     }
                 ]
                 }    
@@ -112,16 +173,18 @@
         },
         {
             "type": "Microsoft.KeyVault/vaults/secrets",
-            "name": "[concat(variables('vaultName'), '/', variables('secretName'))]",
+            "name": "[concat(variables('vaultName'), '/SQLConnectionString')]",
             "apiVersion": "2016-10-01",
             "location": "[resourceGroup().location]",
             "properties": {
                 "contentType": "text/plain",
-                "value": "[parameters('secret')]"
+                "value": "[concat('Data Source=tcp:', reference(resourceId('Microsoft.Sql/servers/', variables('sqlserverName'))).fullyQualifiedDomainName, ',1433;Initial Catalog=', variables('databaseName'), ';User Id=', parameters('sqlAdministratorLogin'), '@', reference(resourceId('Microsoft.Sql/servers/', variables('sqlserverName'))).fullyQualifiedDomainName, ';Password=', parameters('sqlAdministratorLoginPassword'), ';')]"
             },
             "dependsOn": [
-                "[resourceId('Microsoft.KeyVault/vaults', variables('vaultName'))]"
+                "[resourceId('Microsoft.KeyVault/vaults', variables('vaultName'))]",
+                "[variables('sqlserverName')]"
             ]
         }
     ]
   }
+
