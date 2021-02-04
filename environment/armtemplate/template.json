@@ -2,39 +2,17 @@
     "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
-        "resourceName": {
-            "type": "string",
-            "metadata": {
-                "description": "Resource name and prefix for all resources"
-            }   
-        },
-        "secret" : {
-            "type": "string",
-            "metadata": {
-                "description": "The value to store in Key Vault for the web app to display"
-            }
-        },
-        "sqlAdministratorLogin": {
-            "type": "string",
-            "metadata": {
-                "description": "The admin user of the SQL Server"
-                }
-        },
-        "sqlAdministratorLoginPassword": {
-            "type": "securestring",
-            "metadata": {
-                "description": "The password of the admin user of the SQL Server"
-            }
-        }
+        "resourcePrefix": { "type": "string", "metadata": { "description": "Resource name and prefix for all resources" }   },
+        "sqlAdministratorLogin": { "type": "string", "metadata": { "description": "The username of the admin user of the SQL Server" } },
+        "sqlAdministratorLoginPassword": { "type": "securestring", "metadata": { "description": "The password of the admin user of the SQL Server" } }, 
+        "databaseName": { "type": "string", "metadata": { "description": "The password of the admin user of the SQL Server" } }
     },
     "variables": {
-        "linuxPlanName": "[concat(parameters('resourceName'), 'linuxPlan')]",
-        "windowsPlanName": "[concat(parameters('resourceName'), 'windowsPlan')]",
-        "customersAPI": "[concat(parameters('resourceName'), 'customers')]",
-        "vaultName": "[concat(parameters('resourceName'), 'vault')]",
-        "secretName": "secret",
-        "sqlserverName": "[concat(parameters('resourceName'),'sqlserver')]",
-        "databaseName": "insurance"
+        "linuxPlanName": "[concat(parameters('resourcePrefix'), 'linuxPlan')]",
+        "windowsPlanName": "[concat(parameters('resourcePrefix'), 'windowsPlan')]",
+        "customersAPI": "[concat(parameters('resourcePrefix'), 'customers')]",
+        "vaultName": "[concat(parameters('resourcePrefix'), 'vault')]",
+        "sqlserverName": "[concat(parameters('resourcePrefix'),'sqlserver')]"
     },
     "resources": 
     [
@@ -53,7 +31,7 @@
             },
             "resources": [
                 {
-                    "name": "[variables('databaseName')]",
+                    "name": "[parameters('databaseName')]",
                     "type": "databases",
                     "location": "[resourceGroup().location]",
                     "tags": {
@@ -68,7 +46,25 @@
                         "collation": "SQL_Latin1_General_CP1_CI_AS",
                         "maxSizeBytes": "1073741824",
                         "requestedServiceObjectiveName": "Basic"
-                    }
+                    },
+                    "resources": [
+                        {
+                            "type": "extensions",
+                            "apiVersion": "2014-04-01",
+                            "name": "Import",
+                            "dependsOn": [
+                                "[resourceId('Microsoft.Sql/servers/databases', variables('sqlserverName'), parameters('databaseName'))]"
+                            ],
+                            "properties": {
+                                "storageKeyType": "SharedAccessKey",
+                                "storageKey": "?sv=2019-12-12&ss=b&srt=o&sp=r&se=2021-02-04T23:50:26Z&st=2021-02-04T15:50:26Z&spr=https,http&sig=mupzJSl9I5Znl8RUPoJe2uABrxjLK473POgm35gE1u4%3D",
+                                "storageUri": "https://adoworkshophelper.blob.core.windows.net/shared/insuance.bacpac",
+                                "administratorLogin": "[parameters('sqlAdministratorLogin')]",
+                                "administratorLoginPassword": "[parameters('sqlAdministratorLoginPassword')]",
+                                "operationMode": "Import"
+                            }
+                        }
+                    ]
                 },
                 {
                     "type": "firewallrules",
@@ -178,7 +174,7 @@
             "location": "[resourceGroup().location]",
             "properties": {
                 "contentType": "text/plain",
-                "value": "[concat('Server=tcp:', reference(resourceId('Microsoft.Sql/servers/', variables('sqlserverName'))).fullyQualifiedDomainName, ',1433;Initial Catalog=', variables('databaseName'), ';User Id=', parameters('sqlAdministratorLogin'), '@', reference(resourceId('Microsoft.Sql/servers/', variables('sqlserverName'))).fullyQualifiedDomainName, ';Password=', parameters('sqlAdministratorLoginPassword'), ';MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30')]"
+                "value": "[concat('Server=tcp:', reference(resourceId('Microsoft.Sql/servers/', variables('sqlserverName'))).fullyQualifiedDomainName, ',1433;Initial Catalog=', parameters('databaseName'), ';User Id=', parameters('sqlAdministratorLogin'), '@', reference(resourceId('Microsoft.Sql/servers/', variables('sqlserverName'))).fullyQualifiedDomainName, ';Password=', parameters('sqlAdministratorLoginPassword'), ';MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30')]"
             },
             "dependsOn": [
                 "[resourceId('Microsoft.KeyVault/vaults', variables('vaultName'))]"
