@@ -5,17 +5,55 @@
         "resourcePrefix": { "type": "string", "metadata": { "description": "Resource name and prefix for all resources" }   },
         "sqlAdministratorLogin": { "type": "string", "metadata": { "description": "The username of the admin user of the SQL Server" } },
         "sqlAdministratorLoginPassword": { "type": "securestring", "metadata": { "description": "The password of the admin user of the SQL Server" } }, 
-        "databaseName": { "type": "string", "metadata": { "description": "The password of the admin user of the SQL Server" } }
+        "databaseName": { "type": "string", "metadata": { "description": "The password of the admin user of the SQL Server" } },
+        "apimPublisherEmail": { "type": "string", "metadata": { "description": "Email address for APIM admin" } },
+        "apimPublisherName": { "type": "string", "metadata": { "description": "Name of APIM admin user" } }
     },
     "variables": {
         "linuxPlanName": "[concat(parameters('resourcePrefix'), 'linuxPlan')]",
         "windowsPlanName": "[concat(parameters('resourcePrefix'), 'windowsPlan')]",
         "customersAPI": "[concat(parameters('resourcePrefix'), 'customers')]",
         "vaultName": "[concat(parameters('resourcePrefix'), 'vault')]",
-        "sqlserverName": "[concat(parameters('resourcePrefix'),'sqlserver')]"
+        "sqlserverName": "[concat(parameters('resourcePrefix'),'sqlserver')]",
+        "devAPIMInstanceName": "[concat(parameters('resourcePrefix'),'devAPIM')]",
+        "prodAPIMInstanceName": "[concat(parameters('resourcePrefix'),'prodAPIM')]"
     },
     "resources": 
     [
+        {
+            "apiVersion": "2019-12-01",
+            "name": "[variables('devAPIMInstanceName')]",
+            "type": "Microsoft.ApiManagement/service",
+            "location": "[resourceGroup().location]",
+            "sku": {
+                "name": "Developer",
+                "capacity": "1"
+            },
+            "properties": {
+                "publisherEmail": "[parameters('apimPublisherEmail')]",
+                "publisherName": "[parameters('apimPublisherName')]"
+            },
+            "identity": {
+                "type": "SystemAssigned"
+            }
+        },
+        {
+            "apiVersion": "2019-12-01",
+            "name": "[variables('prodAPIMInstanceName')]",
+            "type": "Microsoft.ApiManagement/service",
+            "location": "[resourceGroup().location]",
+            "sku": {
+                "name": "Developer",
+                "capacity": "1"
+            },
+            "properties": {
+                "publisherEmail": "[parameters('apimPublisherEmail')]",
+                "publisherName": "[parameters('apimPublisherName')]"
+            },
+            "identity": {
+                "type": "SystemAssigned"
+            }
+        },
         {
             "name": "[variables('sqlserverName')]",
             "type": "Microsoft.Sql/servers",
@@ -57,7 +95,7 @@
                             ],
                             "properties": {
                                 "storageKeyType": "SharedAccessKey",
-                                "storageKey": "?sv=2019-12-12&ss=b&srt=o&sp=r&se=2021-02-04T23:50:26Z&st=2021-02-04T15:50:26Z&spr=https,http&sig=mupzJSl9I5Znl8RUPoJe2uABrxjLK473POgm35gE1u4%3D",
+                                "storageKey": "?sv=2019-12-12&ss=b&srt=co&sp=r&se=2021-02-05T18:16:19Z&st=2021-02-05T10:16:19Z&spr=https,http&sig=ubptpLR%2BMQGe4pfbmT2UN69mUbkeh%2B7ycRbzu9Pn11E%3D",
                                 "storageUri": "https://adoworkshophelper.blob.core.windows.net/shared/insuance.bacpac",
                                 "administratorLogin": "[parameters('sqlAdministratorLogin')]",
                                 "administratorLoginPassword": "[parameters('sqlAdministratorLoginPassword')]",

@@ -5,6 +5,8 @@
       "resourcePrefix": { "value": "insprefix" },
       "sqlAdministratorLoginPassword": { "value": "YourPasswordHere" },
       "sqlAdministratorLogin": { "value": "SQLUser1" },
-      "databaseName": { "value": "insurance" }
+      "databaseName": { "value": "insurance" },
+      "apimPublisherEmail": { "value": "youremail@outlook.com" },
+      "apimPublisherName": { "value": "APIM Admin User" }
     }
   }
