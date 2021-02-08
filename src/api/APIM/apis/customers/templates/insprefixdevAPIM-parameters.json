@@ -6,13 +6,13 @@
       "value": "insprefixprodAPIM"
     },
     "LinkedTemplatesBaseUrl": {
-      "value": "./"
+      "value": "https://raw.githubusercontent.com/s-leonard/AzureAPIM/main/src/api/APIM/apis/customers"
     },
     "LinkedTemplatesUrlQueryString": {
       "value": ""
     },
     "PolicyXMLBaseUrl": {
-      "value": "./policies"
+      "value": "https://raw.githubusercontent.com/s-leonard/AzureAPIM/main/src/api/APIM/apis/customers/policies"
     }
   },
   "resources": []
