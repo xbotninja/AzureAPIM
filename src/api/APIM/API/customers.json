@@ -1,0 +1,10 @@
+{
+    "sourceApimName": "insprefixdevAPIM",
+    "destinationApimName": "",
+    "resourceGroup": "mondaydemo",
+    "fileFolder": "c:\\Users\\stleonar\\Documents\\GitHub\\AzureAPIM\\src\\api\\APIM\\API\\templates",
+    "apiName": "customers",
+    "linkedTemplatesBaseUrl": "",
+    "linkedTemplatesUrlQueryString": "",
+    "policyXMLBaseUrl": ""
+}
