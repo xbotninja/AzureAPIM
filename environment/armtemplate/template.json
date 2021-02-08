@@ -95,7 +95,7 @@
                             ],
                             "properties": {
                                 "storageKeyType": "SharedAccessKey",
-                                "storageKey": "?sv=2019-12-12&ss=b&srt=co&sp=r&se=2021-02-05T18:16:19Z&st=2021-02-05T10:16:19Z&spr=https,http&sig=ubptpLR%2BMQGe4pfbmT2UN69mUbkeh%2B7ycRbzu9Pn11E%3D",
+                                "storageKey": "?sv=2019-12-12&ss=b&srt=co&sp=r&se=2023-02-08T20:17:13Z&st=2021-02-08T12:17:13Z&spr=https,http&sig=%2BI3tHqccmIp%2BFaloPCLsYYs6%2FscDw3fGKwo6aJgkX4A%3D",
                                 "storageUri": "https://adoworkshophelper.blob.core.windows.net/shared/insuance.bacpac",
                                 "administratorLogin": "[parameters('sqlAdministratorLogin')]",
                                 "administratorLoginPassword": "[parameters('sqlAdministratorLoginPassword')]",
