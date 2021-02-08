@@ -6,13 +6,13 @@
       "value": "insprefixprodAPIM"
     },
     "LinkedTemplatesBaseUrl": {
-      "value": ""
+      "value": "./"
     },
     "LinkedTemplatesUrlQueryString": {
       "value": ""
     },
     "PolicyXMLBaseUrl": {
-      "value": ""
+      "value": "./policies"
     }
   },
   "resources": []
