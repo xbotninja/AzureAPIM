@@ -1,0 +1,484 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "ApimServiceName": {
+      "type": "string"
+    },
+    "PolicyXMLSasToken": {
+      "type": "string"
+    },
+    "PolicyXMLBaseUrl": {
+      "type": "string"
+    },
+    "serviceUrl": {
+      "type": "object"
+    },
+    "ApiLoggerId": {
+      "type": "object"
+    }
+  },
+  "resources": [
+    {
+      "properties": {
+        "authenticationSettings": {
+          "subscriptionKeyRequired": false
+        },
+        "subscriptionKeyParameterNames": {
+          "header": "Ocp-Apim-Subscription-Key",
+          "query": "subscription-key"
+        },
+        "apiRevision": "1",
+        "isCurrent": true,
+        "subscriptionRequired": true,
+        "displayName": "test",
+        "serviceUrl": "[parameters('serviceUrl').test]",
+        "path": "test",
+        "protocols": [
+          "https"
+        ]
+      },
+      "name": "[concat(parameters('ApimServiceName'), '/test')]",
+      "type": "Microsoft.ApiManagement/service/apis",
+      "apiVersion": "2019-01-01",
+      "dependsOn": []
+    },
+    {
+      "properties": {
+        "contentType": "application/vnd.oai.openapi.components+json",
+        "document": {
+          "components": {
+            "schemas": {
+              "Customer": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "integer",
+                    "format": "int32"
+                  },
+                  "title": {
+                    "type": "string",
+                    "nullable": true
+                  },
+                  "firstName": {
+                    "type": "string",
+                    "nullable": true
+                  },
+                  "lastName": {
+                    "type": "string",
+                    "nullable": true
+                  },
+                  "email": {
+                    "type": "string",
+                    "nullable": true
+                  }
+                },
+                "additionalProperties": false
+              },
+              "WeatherForecast": {
+                "type": "object",
+                "properties": {
+                  "date": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "temperatureC": {
+                    "type": "integer",
+                    "format": "int32"
+                  },
+                  "temperatureF": {
+                    "type": "integer",
+                    "format": "int32",
+                    "readOnly": true
+                  },
+                  "summary": {
+                    "type": "string",
+                    "nullable": true
+                  }
+                },
+                "additionalProperties": false
+              },
+              "CustomersGet200TextPlainResponse": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/Customer"
+                }
+              },
+              "CustomersGet200ApplicationJsonResponse": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/Customer"
+                }
+              },
+              "CustomersGet200TextJsonResponse": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/Customer"
+                }
+              },
+              "CustomersPost200TextPlainResponse": {
+                "type": "integer",
+                "format": "int32"
+              },
+              "CustomersPost200ApplicationJsonResponse": {
+                "type": "integer",
+                "format": "int32"
+              },
+              "CustomersPost200TextJsonResponse": {
+                "type": "integer",
+                "format": "int32"
+              },
+              "WeatherForecastGet200TextPlainResponse": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/WeatherForecast"
+                }
+              },
+              "WeatherForecastGet200ApplicationJsonResponse": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/WeatherForecast"
+                }
+              },
+              "WeatherForecastGet200TextJsonResponse": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/WeatherForecast"
+                }
+              }
+            }
+          }
+        }
+      },
+      "name": "[concat(parameters('ApimServiceName'), '/test/602b93f53f84fa028ca77fc0')]",
+      "type": "Microsoft.ApiManagement/service/apis/schemas",
+      "apiVersion": "2019-01-01",
+      "dependsOn": [
+        "[resourceId('Microsoft.ApiManagement/service/apis', parameters('ApimServiceName'), 'test')]"
+      ]
+    },
+    {
+      "properties": {
+        "templateParameters": [],
+        "request": {
+          "queryParameters": [],
+          "headers": [],
+          "representations": []
+        },
+        "responses": [
+          {
+            "statusCode": 200,
+            "description": "Success",
+            "headers": [],
+            "representations": [
+              {
+                "contentType": "text/plain",
+                "schemaId": "602b93f53f84fa028ca77fc0",
+                "typeName": "CustomersGet200TextPlainResponse"
+              },
+              {
+                "contentType": "application/json",
+                "schemaId": "602b93f53f84fa028ca77fc0",
+                "typeName": "CustomersGet200ApplicationJsonResponse"
+              },
+              {
+                "contentType": "text/json",
+                "schemaId": "602b93f53f84fa028ca77fc0",
+                "typeName": "CustomersGet200TextJsonResponse"
+              }
+            ]
+          }
+        ],
+        "displayName": "/Customers - GET",
+        "method": "GET",
+        "urlTemplate": "/Customers"
+      },
+      "name": "[concat(parameters('ApimServiceName'), '/test/get-customers')]",
+      "type": "Microsoft.ApiManagement/service/apis/operations",
+      "apiVersion": "2019-01-01",
+      "dependsOn": [
+        "[resourceId('Microsoft.ApiManagement/service/apis', parameters('ApimServiceName'), 'test')]",
+        "[resourceId('Microsoft.ApiManagement/service/apis/schemas', parameters('ApimServiceName'), 'test', '602b93f53f84fa028ca77fc0')]"
+      ]
+    },
+    {
+      "properties": {
+        "displayName": "Customers"
+      },
+      "name": "[concat(parameters('ApimServiceName'), '/test/get-customers/Customers')]",
+      "type": "Microsoft.ApiManagement/service/apis/operations/tags",
+      "apiVersion": "2019-01-01",
+      "dependsOn": [
+        "[resourceId('Microsoft.ApiManagement/service/apis/operations', parameters('ApimServiceName'), 'test', 'get-customers')]"
+      ]
+    },
+    {
+      "properties": {
+        "templateParameters": [],
+        "request": {
+          "queryParameters": [
+            {
+              "name": "id",
+              "description": "Format - int32.",
+              "type": "integer",
+              "required": false,
+              "values": []
+            }
+          ],
+          "headers": [],
+          "representations": [
+            {
+              "contentType": "application/json",
+              "schemaId": "602b93f53f84fa028ca77fc0",
+              "typeName": "Customer"
+            },
+            {
+              "contentType": "text/json",
+              "schemaId": "602b93f53f84fa028ca77fc0",
+              "typeName": "Customer"
+            },
+            {
+              "contentType": "application/*+json",
+              "schemaId": "602b93f53f84fa028ca77fc0",
+              "typeName": "Customer"
+            }
+          ]
+        },
+        "responses": [
+          {
+            "statusCode": 200,
+            "description": "Success",
+            "headers": [],
+            "representations": [
+              {
+                "contentType": "text/plain",
+                "schemaId": "602b93f53f84fa028ca77fc0",
+                "typeName": "CustomersPost200TextPlainResponse"
+              },
+              {
+                "contentType": "application/json",
+                "schemaId": "602b93f53f84fa028ca77fc0",
+                "typeName": "CustomersPost200ApplicationJsonResponse"
+              },
+              {
+                "contentType": "text/json",
+                "schemaId": "602b93f53f84fa028ca77fc0",
+                "typeName": "CustomersPost200TextJsonResponse"
+              }
+            ]
+          }
+        ],
+        "displayName": "/Customers - POST",
+        "method": "POST",
+        "urlTemplate": "/Customers"
+      },
+      "name": "[concat(parameters('ApimServiceName'), '/test/post-customers')]",
+      "type": "Microsoft.ApiManagement/service/apis/operations",
+      "apiVersion": "2019-01-01",
+      "dependsOn": [
+        "[resourceId('Microsoft.ApiManagement/service/apis', parameters('ApimServiceName'), 'test')]",
+        "[resourceId('Microsoft.ApiManagement/service/apis/schemas', parameters('ApimServiceName'), 'test', '602b93f53f84fa028ca77fc0')]"
+      ]
+    },
+    {
+      "properties": {
+        "displayName": "Customers"
+      },
+      "name": "[concat(parameters('ApimServiceName'), '/test/post-customers/Customers')]",
+      "type": "Microsoft.ApiManagement/service/apis/operations/tags",
+      "apiVersion": "2019-01-01",
+      "dependsOn": [
+        "[resourceId('Microsoft.ApiManagement/service/apis/operations', parameters('ApimServiceName'), 'test', 'post-customers')]"
+      ]
+    },
+    {
+      "properties": {
+        "templateParameters": [],
+        "request": {
+          "queryParameters": [],
+          "headers": [],
+          "representations": [
+            {
+              "contentType": "application/json",
+              "schemaId": "602b93f53f84fa028ca77fc0",
+              "typeName": "Customer"
+            },
+            {
+              "contentType": "text/json",
+              "schemaId": "602b93f53f84fa028ca77fc0",
+              "typeName": "Customer"
+            },
+            {
+              "contentType": "application/*+json",
+              "schemaId": "602b93f53f84fa028ca77fc0",
+              "typeName": "Customer"
+            }
+          ]
+        },
+        "responses": [
+          {
+            "statusCode": 200,
+            "description": "Success",
+            "headers": [],
+            "representations": [
+              {
+                "contentType": "text/plain",
+                "schemaId": "602b93f53f84fa028ca77fc0",
+                "typeName": "Customer"
+              },
+              {
+                "contentType": "application/json",
+                "schemaId": "602b93f53f84fa028ca77fc0",
+                "typeName": "Customer"
+              },
+              {
+                "contentType": "text/json",
+                "schemaId": "602b93f53f84fa028ca77fc0",
+                "typeName": "Customer"
+              }
+            ]
+          }
+        ],
+        "displayName": "/Customers - PUT",
+        "method": "PUT",
+        "urlTemplate": "/Customers"
+      },
+      "name": "[concat(parameters('ApimServiceName'), '/test/put-customers')]",
+      "type": "Microsoft.ApiManagement/service/apis/operations",
+      "apiVersion": "2019-01-01",
+      "dependsOn": [
+        "[resourceId('Microsoft.ApiManagement/service/apis', parameters('ApimServiceName'), 'test')]",
+        "[resourceId('Microsoft.ApiManagement/service/apis/schemas', parameters('ApimServiceName'), 'test', '602b93f53f84fa028ca77fc0')]"
+      ]
+    },
+    {
+      "properties": {
+        "displayName": "Customers"
+      },
+      "name": "[concat(parameters('ApimServiceName'), '/test/put-customers/Customers')]",
+      "type": "Microsoft.ApiManagement/service/apis/operations/tags",
+      "apiVersion": "2019-01-01",
+      "dependsOn": [
+        "[resourceId('Microsoft.ApiManagement/service/apis/operations', parameters('ApimServiceName'), 'test', 'put-customers')]"
+      ]
+    },
+    {
+      "properties": {
+        "templateParameters": [
+          {
+            "name": "id",
+            "description": "Format - int32.",
+            "type": "integer",
+            "required": true,
+            "values": []
+          }
+        ],
+        "request": {
+          "queryParameters": [],
+          "headers": [],
+          "representations": []
+        },
+        "responses": [
+          {
+            "statusCode": 200,
+            "description": "Success",
+            "headers": [],
+            "representations": [
+              {
+                "contentType": "text/plain",
+                "schemaId": "602b93f53f84fa028ca77fc0",
+                "typeName": "Customer"
+              },
+              {
+                "contentType": "application/json",
+                "schemaId": "602b93f53f84fa028ca77fc0",
+                "typeName": "Customer"
+              },
+              {
+                "contentType": "text/json",
+                "schemaId": "602b93f53f84fa028ca77fc0",
+                "typeName": "Customer"
+              }
+            ]
+          }
+        ],
+        "displayName": "/Customers/{id} - GET",
+        "method": "GET",
+        "urlTemplate": "/Customers/{id}"
+      },
+      "name": "[concat(parameters('ApimServiceName'), '/test/get-customers-id')]",
+      "type": "Microsoft.ApiManagement/service/apis/operations",
+      "apiVersion": "2019-01-01",
+      "dependsOn": [
+        "[resourceId('Microsoft.ApiManagement/service/apis', parameters('ApimServiceName'), 'test')]",
+        "[resourceId('Microsoft.ApiManagement/service/apis/schemas', parameters('ApimServiceName'), 'test', '602b93f53f84fa028ca77fc0')]"
+      ]
+    },
+    {
+      "properties": {
+        "displayName": "Customers"
+      },
+      "name": "[concat(parameters('ApimServiceName'), '/test/get-customers-id/Customers')]",
+      "type": "Microsoft.ApiManagement/service/apis/operations/tags",
+      "apiVersion": "2019-01-01",
+      "dependsOn": [
+        "[resourceId('Microsoft.ApiManagement/service/apis/operations', parameters('ApimServiceName'), 'test', 'get-customers-id')]"
+      ]
+    },
+    {
+      "properties": {
+        "templateParameters": [],
+        "request": {
+          "queryParameters": [],
+          "headers": [],
+          "representations": []
+        },
+        "responses": [
+          {
+            "statusCode": 200,
+            "description": "Success",
+            "headers": [],
+            "representations": [
+              {
+                "contentType": "text/plain",
+                "schemaId": "602b93f53f84fa028ca77fc0",
+                "typeName": "WeatherForecastGet200TextPlainResponse"
+              },
+              {
+                "contentType": "application/json",
+                "schemaId": "602b93f53f84fa028ca77fc0",
+                "typeName": "WeatherForecastGet200ApplicationJsonResponse"
+              },
+              {
+                "contentType": "text/json",
+                "schemaId": "602b93f53f84fa028ca77fc0",
+                "typeName": "WeatherForecastGet200TextJsonResponse"
+              }
+            ]
+          }
+        ],
+        "displayName": "/WeatherForecast - GET",
+        "method": "GET",
+        "urlTemplate": "/WeatherForecast"
+      },
+      "name": "[concat(parameters('ApimServiceName'), '/test/get-weatherforecast')]",
+      "type": "Microsoft.ApiManagement/service/apis/operations",
+      "apiVersion": "2019-01-01",
+      "dependsOn": [
+        "[resourceId('Microsoft.ApiManagement/service/apis', parameters('ApimServiceName'), 'test')]",
+        "[resourceId('Microsoft.ApiManagement/service/apis/schemas', parameters('ApimServiceName'), 'test', '602b93f53f84fa028ca77fc0')]"
+      ]
+    },
+    {
+      "properties": {
+        "displayName": "WeatherForecast"
+      },
+      "name": "[concat(parameters('ApimServiceName'), '/test/get-weatherforecast/WeatherForecast')]",
+      "type": "Microsoft.ApiManagement/service/apis/operations/tags",
+      "apiVersion": "2019-01-01",
+      "dependsOn": [
+        "[resourceId('Microsoft.ApiManagement/service/apis/operations', parameters('ApimServiceName'), 'test', 'get-weatherforecast')]"
+      ]
+    }
+  ]
+}

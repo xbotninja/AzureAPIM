@@ -4,7 +4,7 @@
     "resourceGroup": "mondaydemo",
     "fileFolder": "./extract",
     "linkedTemplatesBaseUrl": "{{location}}{{query}}",
-    "LinkedTemplatesUrlQueryString": "",
+    "LinkedTemplatesUrlQueryString": "{{query}}",
     "policyXMLBaseUrl": "{{location}}/policies",
     "policyXMLSasToken": "{{query}}",
     "splitAPIs": "true",

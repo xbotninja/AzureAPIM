@@ -1,0 +1,160 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "ApimServiceName": {
+      "type": "string"
+    },
+    "PolicyXMLSasToken": {
+      "type": "string"
+    },
+    "PolicyXMLBaseUrl": {
+      "type": "string"
+    },
+    "serviceUrl": {
+      "type": "object"
+    },
+    "ApiLoggerId": {
+      "type": "object"
+    }
+  },
+  "resources": [
+    {
+      "properties": {
+        "authenticationSettings": {
+          "subscriptionKeyRequired": false
+        },
+        "subscriptionKeyParameterNames": {
+          "header": "Ocp-Apim-Subscription-Key",
+          "query": "subscription-key"
+        },
+        "apiRevision": "1",
+        "isCurrent": true,
+        "subscriptionRequired": true,
+        "displayName": "demo",
+        "serviceUrl": "[parameters('serviceUrl').demo]",
+        "path": "demo",
+        "protocols": [
+          "https"
+        ]
+      },
+      "name": "[concat(parameters('ApimServiceName'), '/demo')]",
+      "type": "Microsoft.ApiManagement/service/apis",
+      "apiVersion": "2019-01-01",
+      "dependsOn": []
+    },
+    {
+      "properties": {
+        "contentType": "application/vnd.oai.openapi.components+json",
+        "document": {
+          "components": {
+            "schemas": {
+              "WeatherForecast": {
+                "type": "object",
+                "properties": {
+                  "date": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "temperatureC": {
+                    "type": "integer",
+                    "format": "int32"
+                  },
+                  "temperatureF": {
+                    "type": "integer",
+                    "format": "int32",
+                    "readOnly": true
+                  },
+                  "summary": {
+                    "type": "string",
+                    "nullable": true
+                  }
+                },
+                "additionalProperties": false
+              },
+              "WeatherForecastGet200TextPlainResponse": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/WeatherForecast"
+                }
+              },
+              "WeatherForecastGet200ApplicationJsonResponse": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/WeatherForecast"
+                }
+              },
+              "WeatherForecastGet200TextJsonResponse": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/WeatherForecast"
+                }
+              }
+            }
+          }
+        }
+      },
+      "name": "[concat(parameters('ApimServiceName'), '/demo/602b92763f84fa028ca77fbb')]",
+      "type": "Microsoft.ApiManagement/service/apis/schemas",
+      "apiVersion": "2019-01-01",
+      "dependsOn": [
+        "[resourceId('Microsoft.ApiManagement/service/apis', parameters('ApimServiceName'), 'demo')]"
+      ]
+    },
+    {
+      "properties": {
+        "templateParameters": [],
+        "request": {
+          "queryParameters": [],
+          "headers": [],
+          "representations": []
+        },
+        "responses": [
+          {
+            "statusCode": 200,
+            "description": "Success",
+            "headers": [],
+            "representations": [
+              {
+                "contentType": "text/plain",
+                "schemaId": "602b92763f84fa028ca77fbb",
+                "typeName": "WeatherForecastGet200TextPlainResponse"
+              },
+              {
+                "contentType": "application/json",
+                "schemaId": "602b92763f84fa028ca77fbb",
+                "typeName": "WeatherForecastGet200ApplicationJsonResponse"
+              },
+              {
+                "contentType": "text/json",
+                "schemaId": "602b92763f84fa028ca77fbb",
+                "typeName": "WeatherForecastGet200TextJsonResponse"
+              }
+            ]
+          }
+        ],
+        "displayName": "/WeatherForecast - GET",
+        "method": "GET",
+        "urlTemplate": "/WeatherForecast"
+      },
+      "name": "[concat(parameters('ApimServiceName'), '/demo/get-weatherforecast')]",
+      "type": "Microsoft.ApiManagement/service/apis/operations",
+      "apiVersion": "2019-01-01",
+      "dependsOn": [
+        "[resourceId('Microsoft.ApiManagement/service/apis', parameters('ApimServiceName'), 'demo')]",
+        "[resourceId('Microsoft.ApiManagement/service/apis/schemas', parameters('ApimServiceName'), 'demo', '602b92763f84fa028ca77fbb')]"
+      ]
+    },
+    {
+      "properties": {
+        "displayName": "WeatherForecast"
+      },
+      "name": "[concat(parameters('ApimServiceName'), '/demo/get-weatherforecast/WeatherForecast')]",
+      "type": "Microsoft.ApiManagement/service/apis/operations/tags",
+      "apiVersion": "2019-01-01",
+      "dependsOn": [
+        "[resourceId('Microsoft.ApiManagement/service/apis/operations', parameters('ApimServiceName'), 'demo', 'get-weatherforecast')]"
+      ]
+    }
+  ]
+}

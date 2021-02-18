@@ -26,6 +26,17 @@
       "name": "[concat(parameters('ApimServiceName'), '/customersbackend')]",
       "type": "Microsoft.ApiManagement/service/properties",
       "apiVersion": "2019-01-01"
+    },
+    {
+      "properties": {
+        "tags": [],
+        "secret": false,
+        "displayName": "customersChanged",
+        "value": "[parameters('NamedValues').customersChanged]"
+      },
+      "name": "[concat(parameters('ApimServiceName'), '/customersChanged')]",
+      "type": "Microsoft.ApiManagement/service/properties",
+      "apiVersion": "2019-01-01"
     }
   ]
 }

@@ -8,6 +8,9 @@
     "LinkedTemplatesBaseUrl": {
       "value": "{{location}}{{query}}"
     },
+    "LinkedTemplatesUrlQueryString": {
+      "value": "{{query}}"
+    },
     "PolicyXMLBaseUrl": {
       "value": "{{location}}/policies"
     },
@@ -21,7 +24,8 @@
     },
     "NamedValues": {
       "value": {
-        "customersbackend": "https://insprefixcustomers.azurewebsites.net"
+        "customersbackend": "https://insprefixcustomers.azurewebsites.net",
+        "customersChanged": "cust"
       }
     },
     "ApiLoggerId": {

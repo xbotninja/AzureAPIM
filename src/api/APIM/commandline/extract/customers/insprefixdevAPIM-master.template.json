@@ -14,6 +14,12 @@
         "description": "Base URL of the repository that contains the generated templates"
       }
     },
+    "LinkedTemplatesUrlQueryString": {
+      "type": "string",
+      "metadata": {
+        "description": "Query string for the URL of the repository"
+      }
+    },
     "PolicyXMLBaseUrl": {
       "type": "string",
       "metadata": {
@@ -56,7 +62,7 @@
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "[concat(parameters('LinkedTemplatesBaseUrl'), '/insprefixdevAPIM-namedValues.template.json')]",
+          "uri": "[concat(parameters('LinkedTemplatesBaseUrl'), '/insprefixdevAPIM-namedValues.template.json', parameters('LinkedTemplatesUrlQueryString'))]",
           "contentVersion": "1.0.0.0"
         },
         "parameters": {
@@ -83,7 +89,7 @@
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "[concat(parameters('LinkedTemplatesBaseUrl'), '/insprefixdevAPIM-globalServicePolicy.template.json')]",
+          "uri": "[concat(parameters('LinkedTemplatesBaseUrl'), '/insprefixdevAPIM-globalServicePolicy.template.json', parameters('LinkedTemplatesUrlQueryString'))]",
           "contentVersion": "1.0.0.0"
         },
         "parameters": {
@@ -109,7 +115,7 @@
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "[concat(parameters('LinkedTemplatesBaseUrl'), '/insprefixdevAPIM-tags.template.json')]",
+          "uri": "[concat(parameters('LinkedTemplatesBaseUrl'), '/insprefixdevAPIM-tags.template.json', parameters('LinkedTemplatesUrlQueryString'))]",
           "contentVersion": "1.0.0.0"
         },
         "parameters": {
@@ -135,7 +141,7 @@
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "[concat(parameters('LinkedTemplatesBaseUrl'), '/insprefixdevAPIM-backends.template.json')]",
+          "uri": "[concat(parameters('LinkedTemplatesBaseUrl'), '/insprefixdevAPIM-backends.template.json', parameters('LinkedTemplatesUrlQueryString'))]",
           "contentVersion": "1.0.0.0"
         },
         "parameters": {
@@ -161,7 +167,7 @@
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "[concat(parameters('LinkedTemplatesBaseUrl'), '/insprefixdevAPIM-customers-api.template.json')]",
+          "uri": "[concat(parameters('LinkedTemplatesBaseUrl'), '/insprefixdevAPIM-customers-api.template.json', parameters('LinkedTemplatesUrlQueryString'))]",
           "contentVersion": "1.0.0.0"
         },
         "parameters": {

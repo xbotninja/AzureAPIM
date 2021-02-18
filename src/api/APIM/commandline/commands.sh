@@ -25,4 +25,4 @@ az storage blob directory upload -c tps --account-name insurancepipe -s "./" -d 
 
   bash testscripts.sh
 
-  ss
+  
