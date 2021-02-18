@@ -5,5 +5,7 @@
     "fileFolder": "c:\\Users\\stleonar\\Documents\\GitHub\\AzureAPIM\\src\\api\\APIM\\templates",
     "linkedTemplatesBaseUrl": "",
     "linkedTemplatesUrlQueryString": "",
-    "policyXMLBaseUrl": ""
+    "policyXMLBaseUrl": "",
+    "policyXMLSasToken": "{{query}}",
+    "splitAPIs": "true"
 }

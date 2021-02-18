@@ -1,0 +1,35 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "ApimServiceName": {
+      "value": "insprefixdevAPIM"
+    },
+    "LinkedTemplatesBaseUrl": {
+      "value": "{{location}}{{query}}"
+    },
+    "PolicyXMLBaseUrl": {
+      "value": "{{location}}/policies"
+    },
+    "PolicyXMLSasToken": {
+      "value": "{{query}}"
+    },
+    "serviceUrl": {
+      "value": {
+        "customers": null
+      }
+    },
+    "NamedValues": {
+      "value": {
+        "customersbackend": "https://insprefixcustomers.azurewebsites.net"
+      }
+    },
+    "ApiLoggerId": {
+      "value": {}
+    },
+    "LoggerResourceId": {
+      "value": {}
+    }
+  },
+  "resources": []
+}

@@ -3,16 +3,16 @@
   "contentVersion": "1.0.0.0",
   "parameters": {
     "ApimServiceName": {
-      "value": "insprefixprodAPIM"
+      "value": ""
     },
     "LinkedTemplatesBaseUrl": {
-      "value": "https://raw.githubusercontent.com/s-leonard/AzureAPIM/main/src/api/APIM/service/templates"
+      "value": ""
     },
     "LinkedTemplatesUrlQueryString": {
       "value": ""
     },
     "PolicyXMLBaseUrl": {
-      "value": "https://raw.githubusercontent.com/s-leonard/AzureAPIM/main/src/api/APIM/service/templates/policies"
+      "value": ""
     }
   },
   "resources": []

@@ -1,0 +1,34 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "ApimServiceName": {
+      "type": "string"
+    },
+    "PolicyXMLSasToken": {
+      "type": "string"
+    },
+    "PolicyXMLBaseUrl": {
+      "type": "string"
+    }
+  },
+  "resources": [
+    {
+      "properties": {
+        "credentials": {
+          "query": {},
+          "header": {}
+        },
+        "tls": {
+          "validateCertificateChain": true,
+          "validateCertificateName": true
+        },
+        "url": "https://insprefixcustomers.azurewebsites.net",
+        "protocol": "http"
+      },
+      "name": "[concat(parameters('ApimServiceName'), '/customers')]",
+      "type": "Microsoft.ApiManagement/service/backends",
+      "apiVersion": "2019-01-01"
+    }
+  ]
+}
