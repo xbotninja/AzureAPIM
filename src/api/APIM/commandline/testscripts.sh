@@ -19,3 +19,4 @@ for d in */ ; do
     az deployment group create --name test --resource-group $rg --template-file ./${d}${apimName}-master.template.json --parameters ./${d}$apimName-parameters.json --parameters LinkedTemplatesBaseUrl=$storageloc --parameters LinkedTemplatesSasToken=$sastoken PolicyXMLSasToken=$sastoken PolicyXMLBaseUrl=${storageloc}/policies 
 done
 
+ss
