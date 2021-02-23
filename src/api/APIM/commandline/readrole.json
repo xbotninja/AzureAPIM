@@ -1,0 +1,10 @@
+[{
+    "allowedMemberTypes": [
+      "Application"
+    ],
+    "description": "Approvers can mark documents as approved",
+    "displayName": "readrole",
+    "isEnabled": "true",
+    "value": "readrole"
+}]
+
