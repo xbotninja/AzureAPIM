@@ -24,5 +24,6 @@ az storage blob directory upload -c tps --account-name insurancepipe -s "./" -d 
   displayName: 'deploy files'
 
   bash testscripts.sh
+bash aad.sh
 
   

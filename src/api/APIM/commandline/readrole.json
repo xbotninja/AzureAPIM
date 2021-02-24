@@ -2,7 +2,7 @@
     "allowedMemberTypes": [
       "Application"
     ],
-    "description": "Approvers can mark documents as approved",
+    "description": "description",
     "displayName": "readrole",
     "isEnabled": "true",
     "value": "readrole"
