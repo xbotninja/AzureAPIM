@@ -18,13 +18,13 @@ apimTarget="insprefixprodAPIM"
 
 az config set extension.use_dynamic_install=yes_without_prompt
 
-az storage blob directory upload -c $container --account-name insurancepipe -s "./extract/602e93bc5a4fe3dea2477f09/*" -d "build$buildID" --recursive
+az storage blob directory upload -c $container --account-name insurancepipe -s "./extract/*" -d "build$buildID" --recursive
 
 
 
 echo "dirrs------------------------------"
 echo " "
-for d in */602e93bc5a4fe3dea2477f09/ ; do
+for d in */ ; do
     echo "$d"
     echo "./${d}${apimName}-master.template.json"
     az deployment group create --name test --resource-group $rg --template-file ./${d}${apimName}-master.template.json --parameters ./${d}$apimName-parameters.json --parameters ApimServiceName=$apimTarget --parameters LinkedTemplatesBaseUrl=$storageloc --parameters LinkedTemplatesUrlQueryString=$sastoken PolicyXMLSasToken=$sastoken PolicyXMLBaseUrl=${storageloc}/policies 

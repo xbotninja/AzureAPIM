@@ -29,12 +29,39 @@ RUN apt-get -y install --no-install-recommends \
 # Install Azure cli
 RUN curl -sL https://aka.ms/InstallAzureCLIDeb | bash
 
+RUN wget -qO- https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > microsoft.asc.gpg \
+   && mv microsoft.asc.gpg /etc/apt/trusted.gpg.d/ \
+   && wget -q https://packages.microsoft.com/config/debian/9/prod.list \
+   && mv prod.list /etc/apt/sources.list.d/microsoft-prod.list \
+   && chown root:root /etc/apt/trusted.gpg.d/microsoft.asc.gpg \
+   && chown root:root /etc/apt/sources.list.d/microsoft-prod.list \
+   && apt-get update && apt-get install dotnet-sdk-3.1 -y --no-install-recommends
 
-# Clean up
-RUN apt-get autoremove -y \
-    && apt-get clean -y \
-    && rm -rf /var/lib/apt/lists/* \
-    && apt-get remove curl unzip wget -y
+   RUN wget -qO- https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > microsoft.asc.gpg \
+   && mv microsoft.asc.gpg /etc/apt/trusted.gpg.d/ \
+   && wget -q https://packages.microsoft.com/config/debian/9/prod.list \
+   && mv prod.list /etc/apt/sources.list.d/microsoft-prod.list \
+   && chown root:root /etc/apt/trusted.gpg.d/microsoft.asc.gpg \
+   && chown root:root /etc/apt/sources.list.d/microsoft-prod.list \
+   && apt-get update && apt-get install dotnet-sdk-2.1 -y --no-install-recommends
+
+WORKDIR /apim
+
+# download APIM Devops Toolkit
+ADD https://github.com/Azure/azure-api-management-devops-resource-kit/archive/v0.5.tar.gz /apim 
+
+# Unpack the zip
+RUN tar -zxvf v0.5.tar.gz
+
+# Go to the solution folder for the tool
+WORKDIR /apim/azure-api-management-devops-resource-kit-0.5/src/APIM_ARMTemplate/apimtemplate/
+
+RUN pwd
+
+# install devops tool kit tool globally
+RUN dotnet pack -c Release \
+ && dotnet tool install -g --add-source '.\bin\Release' apimtemplate 
+
 
 ENV DEBIAN_FRONTEND=dialog
 

@@ -1,5 +1,15 @@
 apim-templates extract --extractorConfig apimconfig.json 
 
+apim-templates extract --extractorConfig apimconfig.json 
+
+
+dotnet tool run apim-templates extract --extractorConfig apimconfig.json 
+
+dotnet apim-templates extract --extractorConfig apimconfig.json 
+
+dotnet tool list
+dotnet tool list -g
+
 az storage file upload-batch --account-key JBXN3F8nteA/J0cqpcMmhhKP5nPKQ5Hj8YypACauHqLU54IVNKeDyseebV1yLVpSdhoEexFLjChr0oSuChLUTA== --account-name insurancepipe --destination 'https://insurancepipe.blob.core.windows.net/tps/test/' --source .
 
 
