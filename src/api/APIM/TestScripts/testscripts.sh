@@ -1,5 +1,5 @@
 
-buildID="1234578"
+buildID="987653"
 storageContainerName="latest7"
 sourceAPIMInstance="insprefixdevAPIM"
 storageSASToken="?sv=2020-02-10&ss=b&srt=co&sp=rlx&se=2022-02-17T18:24:29Z&st=2021-02-17T10:24:29Z&spr=https,http&sig=PbJy4QFRaFJ5WgTCBnR7hgSZg77xFnPCH%2B12sbf39VM%3D"
@@ -20,8 +20,7 @@ az deployment group create --name apim_$buildID --resource-group $destinationRG 
 echo "Loop through and deploy individual API's"
 cd ../apis
 for d in */ ; do
-    echo "$d"
-    echo "./${d}${sourceAPIMInstance}-master.template.json"
-    #az deployment group create --name test --resource-group $destinationRG --template-file ./${d}${sourceAPIMInstance}-master.template.json --parameters ./${d}$sourceAPIMInstance-parameters.json --parameters ApimServiceName=$apimTarget --parameters LinkedTemplatesBaseUrl=$storagelocation --parameters LinkedTemplatesUrlQueryString=$storageSASToken PolicyXMLstorageSASToken=$storageSASToken PolicyXMLBaseUrl=${storagelocation}/policies 
+    echo "Deplopying ./${d}${sourceAPIMInstance}-master.template.json"
+    az deployment group create --name test --resource-group $destinationRG --template-file ./${d}${sourceAPIMInstance}-master.template.json --parameters ./${d}$sourceAPIMInstance-parameters.json --parameters ApimServiceName=$apimTarget --parameters LinkedTemplatesBaseUrl=$storagelocation --parameters LinkedTemplatesUrlQueryString=$storageSASToken PolicyXMLstorageSASToken=$storageSASToken PolicyXMLBaseUrl=${storagelocation}/policies 
 done
 

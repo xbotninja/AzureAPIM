@@ -1,0 +1,172 @@
+trigger:
+- main
+
+variables:
+- name: serviceConnectionName
+  value: 'azurecon'
+- name: poolVmImage
+  value: 'ubuntu-latest'
+- name: storageAccountName
+  value: 'insurancepipe'
+- name: storagecontainer
+  value: 'apimtemplates'
+- name: storageloc
+  value: 'https://$(storageAccountName).blob.core.windows.net/$(storagecontainer)/build$(Build.BuildId)'
+- name: apimTemplatesLocation
+  value: './extract'
+
+
+
+stages:
+- stage: UploadARMTemplates
+  displayName: Upload ARM templates
+  variables:
+    rgName: 'mondaydemo'
+    sourceAPIMName: 'insprefixdevAPIM'
+    destinationAPIMName: 'insprefixdevAPIM'
+  jobs:
+    - job: UploadARMTemplates
+      displayName: Upload ARM Templates to Storage Account
+      pool:
+        vmImage: $(poolVmImage)
+      steps:
+      # Download the source code from repo - default location - $(Pipeline.Workspace)/s
+      - checkout: self
+
+      # Upload files to blob storage
+      - task: AzureCLI@2
+        displayName: Upload files to blob storage
+        inputs:
+          azureSubscription: $(serviceConnectionName)
+          scriptType: bash
+          scriptLocation: inlineScript
+          inlineScript: |
+            az config set extension.use_dynamic_install=yes_without_prompt
+
+            az storage blob directory upload -c $(storagecontainer) --account-name $(storageAccountName) -s "$(apimTemplatesLocation)/*" -d "build$(Build.BuildId)" --recursive
+          workingDirectory: $(Pipeline.Workspace)/s/src/api/APIM/commandline/
+
+      - task: PublishPipelineArtifact@1
+        inputs:
+          targetPath: '$(Pipeline.Workspace)/s/src/api/APIM/commandline'
+          artifact: 'zip'
+          publishLocation: 'pipeline'
+
+
+- stage: DeployToDev
+  displayName: Deploy Dev
+  dependsOn: UploadARMTemplates
+  variables:
+    rgName: 'mondaydemo'
+    sourceAPIMName: 'insprefixdevAPIM'
+    destinationAPIMName: 'insprefixdevAPIM'
+  jobs:
+    - deployment: 'DeployDevAPIM'
+      displayName: 'Deploy to Dev APIM'
+      pool: 
+        vmImage: $(poolVmImage)
+      environment: 'dev'
+      strategy:
+        runOnce:
+          deploy:
+            steps:
+
+            # Download the source code from repo - default location - $(Pipeline.Workspace)/s
+            - task: DownloadPipelineArtifact@2
+              inputs:
+                buildType: 'current'
+                artifactName: 'zip'
+                targetPath: '$(Pipeline.Workspace)/temp'
+
+            # Deploy to Dev Instance
+            - task: AzureCLI@2
+              displayName: ARM Template Deploy
+              inputs:
+                azureSubscription: $(serviceConnectionName)
+                scriptType: bash
+                scriptLocation: inlineScript
+                inlineScript: |
+                  # Generate a SAS token for a storage container that expires in 30 mins
+                  end=`date -u -d "30 minutes" '+%Y-%m-%dT%H:%MZ'`
+                  storageSasToken=`az storage container generate-sas --account-name $(storageAccountName) -n $(storagecontainer) --https-only --permissions dlrw --expiry $end -o tsv`
+                  echo "Sas Token: $storageSasToken"
+                  
+                  # ARM Template deployment overriding the destination ApimServiceName & blob storage account details
+                  az deployment group create --name apim_$(Build.BuildId) \
+                  --resource-group $(rgName) \
+                  --template-file $(apimTemplatesLocation)/$(sourceAPIMName)-master.template.json \
+                  --parameters $(apimTemplatesLocation)/$(sourceAPIMName)-parameters.json \
+                  --parameters ApimServiceName=$(destinationAPIMName) \
+                  --parameters LinkedTemplatesBaseUrl=$(storageloc) \
+                  --parameters LinkedTemplatesUrlQueryString=?${storageSasToken} PolicyXMLSasToken=?${storageSasToken} PolicyXMLBaseUrl=$(storageloc)/policies 
+                workingDirectory: $(Pipeline.Workspace)/temp
+
+
+- stage: DeployToProd
+  displayName: Deploy Prod
+  dependsOn: DeployToDev
+  variables:
+    rgName: 'mondaydemo'
+    sourceAPIMName: 'insprefixdevAPIM'
+    destinationAPIMName: 'insprefixprodAPIM'
+  jobs:
+    - deployment: 'DeployProdAPIM'
+      displayName: 'Deploy to Prod APIM'
+      pool: 
+        vmImage: $(poolVmImage)
+      environment: 'prod'
+      strategy:
+        runOnce:
+          deploy:
+            steps:
+
+            # Download the ARM templates into temp folder
+            - task: DownloadPipelineArtifact@2
+              inputs:
+                buildType: 'current'
+                artifactName: 'zip'
+                targetPath: '$(Pipeline.Workspace)/temp'
+
+            # Deploy to Prod Instance
+            - task: AzureCLI@2
+              displayName: ARM Template Deploy
+              inputs:
+                azureSubscription: $(serviceConnectionName)
+                scriptType: bash
+                scriptLocation: inlineScript
+                inlineScript: |
+                  # Generate a SAS token for a storage container that expires in 30 mins
+                  end=`date -u -d "30 minutes" '+%Y-%m-%dT%H:%MZ'`
+                  storageSasToken=`az storage container generate-sas --account-name $(storageAccountName) -n $(storagecontainer) --https-only --permissions dlrw --expiry $end -o tsv`
+                  echo "Sas Token: $storageSasToken"
+                  
+                  # ARM Template deployment overriding the destination ApimServiceName & blob storage account details
+                  az deployment group create --name apim_$(Build.BuildId) \
+                  --resource-group $(rgName) \
+                  --template-file $(apimTemplatesLocation)/$(sourceAPIMName)-master.template.json \
+                  --parameters $(apimTemplatesLocation)/$(sourceAPIMName)-parameters.json \
+                  --parameters ApimServiceName=$(destinationAPIMName) \
+                  --parameters LinkedTemplatesBaseUrl=$(storageloc) \
+                  --parameters LinkedTemplatesUrlQueryString=?${storageSasToken} PolicyXMLSasToken=?${storageSasToken} PolicyXMLBaseUrl=$(storageloc)/policies 
+                workingDirectory: $(Pipeline.Workspace)/temp
+
+    - job: CleanUp 
+      displayName: Delete files from storage account
+      dependsOn: DeployProdAPIM
+      pool:
+        vmImage: $(poolVmImage)
+      steps:
+      
+      - checkout: self
+
+      # delete files from blob storage
+      - task: AzureCLI@2
+        displayName: Delete Blob Storage Directory
+        inputs:
+          azureSubscription: $(serviceConnectionName)
+          scriptType: bash
+          scriptLocation: inlineScript
+          inlineScript: |
+            az config set extension.use_dynamic_install=yes_without_prompt
+            
+            az storage blob directory delete -c $(storagecontainer) -d "build$(Build.BuildId)" --account-name  $(storageAccountName) --recursive

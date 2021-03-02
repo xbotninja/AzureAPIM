@@ -1,4 +1,11 @@
 echo "Setting subscription"
+
+az login --service-principal --username '0b5fe3a0-8294-4ab6-9eb0-2327bdd53801' --password 'Ggd_dedjRQi~80pDrPf_SXMg95_~0AJ5j1' --tenant '72f988bf-86f1-41af-91ab-2d7cd011db47'
+   
+   
+    az account set --subscription  $subscriptionId
+
+
 subscriptionId=3d3a0fec-2648-40a0-8f3a-f9fc5a5f3db0
 az account set --subscription  $subscriptionId
 
