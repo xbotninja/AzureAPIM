@@ -7,7 +7,7 @@ variables:
 - name: poolVmImage
   value: 'ubuntu-latest'
 - name: storageAccountName
-  value: 'armtpls '
+  value: 'armtpls'
 - name: storagecontainer
   value: 'arm'
 - name: storageloc
