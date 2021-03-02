@@ -7,9 +7,9 @@ variables:
 - name: poolVmImage
   value: 'ubuntu-latest'
 - name: storageAccountName
-  value: 'insurancepipe'
+  value: 'armtpls '
 - name: storagecontainer
-  value: 'apimtemplates'
+  value: 'arm'
 - name: storageloc
   value: 'https://$(storageAccountName).blob.core.windows.net/$(storagecontainer)/build$(Build.BuildId)'
 - name: apimTemplatesLocation
@@ -21,9 +21,9 @@ stages:
 - stage: UploadARMTemplates
   displayName: Upload ARM templates
   variables:
-    rgName: 'mondaydemo'
+    rgName: 'apim'
     sourceAPIMName: 'base-apim'
-    destinationAPIMName: 'insprefixdevAPIM'
+    destinationAPIMName: 'apimBasedevAPIM'
   jobs:
     - job: UploadARMTemplates
       displayName: Upload ARM Templates to Storage Account
@@ -57,9 +57,9 @@ stages:
   displayName: Deploy Dev
   dependsOn: UploadARMTemplates
   variables:
-    rgName: 'mondaydemo'
+    rgName: 'apim'
     sourceAPIMName: 'base-apim'
-    destinationAPIMName: 'insprefixdevAPIM'
+    destinationAPIMName: 'apimBasedevAPIM'
   jobs:
     - deployment: 'DeployDevAPIM'
       displayName: 'Deploy to Dev APIM'
@@ -106,9 +106,9 @@ stages:
   displayName: Deploy Prod
   dependsOn: DeployToDev
   variables:
-    rgName: 'mondaydemo'
+    rgName: 'apim'
     sourceAPIMName: 'base-apim'
-    destinationAPIMName: 'insprefixprodAPIM'
+    destinationAPIMName: 'apimBasedevAPIM'
   jobs:
     - deployment: 'DeployProdAPIM'
       displayName: 'Deploy to Prod APIM'
