@@ -3,7 +3,7 @@
   "contentVersion": "1.0.0.0",
   "parameters": {
     "ApimServiceName": {
-      "value": "insprefixdevAPIM"
+      "value": "tuesapidevAPIM"
     },
     "LinkedTemplatesBaseUrl": {
       "value": "{{location}}{{query}}"
@@ -19,14 +19,11 @@
     },
     "serviceUrl": {
       "value": {
-        "cust": null
+        "echoapi": "http://echoapi.cloudapp.net/api"
       }
     },
     "NamedValues": {
-      "value": {
-        "customersbackend": "https://insprefixcustomers.azurewebsites.net",
-        "customersChanged": "cust"
-      }
+      "value": {}
     },
     "ApiLoggerId": {
       "value": {}
