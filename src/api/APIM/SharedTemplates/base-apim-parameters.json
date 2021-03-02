@@ -1,0 +1,34 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "ApimServiceName": {
+      "value": "basedevAPIM"
+    },
+    "LinkedTemplatesBaseUrl": {
+      "value": "{{location}}{{query}}"
+    },
+    "LinkedTemplatesUrlQueryString": {
+      "value": "{{query}}"
+    },
+    "PolicyXMLBaseUrl": {
+      "value": "{{location}}/policies"
+    },
+    "PolicyXMLSasToken": {
+      "value": "{{query}}"
+    },
+    "serviceUrl": {
+      "value": {}
+    },
+    "NamedValues": {
+      "value": {}
+    },
+    "ApiLoggerId": {
+      "value": {}
+    },
+    "LoggerResourceId": {
+      "value": {}
+    }
+  },
+  "resources": []
+}

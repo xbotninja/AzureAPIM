@@ -1,0 +1,16 @@
+{
+    "baseFileName": "base-apim",
+    "sourceApimName": "",
+    "destinationApimName": "",
+    "resourceGroup": "mondaydemo",
+    "fileFolder": "./OverrideThisValue",
+    "linkedTemplatesBaseUrl": "{{location}}{{query}}",
+    "LinkedTemplatesUrlQueryString": "{{query}}",
+    "policyXMLBaseUrl": "{{location}}/policies",
+    "policyXMLSasToken": "{{query}}",
+    "splitAPIs": "true",
+    "paramServiceUrl": "true",
+    "paramNamedValue": "true",
+    "paramApiLoggerId": "true",
+    "paramLogResourceId": "true"
+}

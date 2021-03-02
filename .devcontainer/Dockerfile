@@ -62,6 +62,9 @@ RUN pwd
 RUN dotnet pack -c Release \
  && dotnet tool install -g --add-source '.\bin\Release' apimtemplate 
 
+RUN pwd
+
+
 
 ENV DEBIAN_FRONTEND=dialog
 
