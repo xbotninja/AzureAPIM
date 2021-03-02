@@ -3,9 +3,9 @@
 ```
 az login
 
-sourceRG="apim"
-sourceAPIMInstance="basedevAPIM"
-destAPIMInstance="basedevAPIM"
+sourceRG="mondaydemo"
+sourceAPIMInstance="insprefixdevAPIM"
+destAPIMInstance="insprefixdevAPIM"
 
 ```
 

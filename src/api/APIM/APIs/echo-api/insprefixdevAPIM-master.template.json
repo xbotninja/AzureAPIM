@@ -62,7 +62,34 @@
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "[concat(parameters('LinkedTemplatesBaseUrl'), '/APIM-Base-globalServicePolicy.template.json', parameters('LinkedTemplatesUrlQueryString'))]",
+          "uri": "[concat(parameters('LinkedTemplatesBaseUrl'), '/insprefixdevAPIM-namedValues.template.json', parameters('LinkedTemplatesUrlQueryString'))]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "ApimServiceName": {
+            "value": "[parameters('ApimServiceName')]"
+          },
+          "PolicyXMLBaseUrl": {
+            "value": "[parameters('PolicyXMLBaseUrl')]"
+          },
+          "PolicyXMLSasToken": {
+            "value": "[parameters('PolicyXMLSasToken')]"
+          },
+          "NamedValues": {
+            "value": "[parameters('NamedValues')]"
+          }
+        }
+      },
+      "name": "namedValuesTemplate",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2018-01-01",
+      "dependsOn": []
+    },
+    {
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(parameters('LinkedTemplatesBaseUrl'), '/insprefixdevAPIM-globalServicePolicy.template.json', parameters('LinkedTemplatesUrlQueryString'))]",
           "contentVersion": "1.0.0.0"
         },
         "parameters": {
@@ -80,13 +107,15 @@
       "name": "globalServicePolicyTemplate",
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2018-01-01",
-      "dependsOn": []
+      "dependsOn": [
+        "[resourceId('Microsoft.Resources/deployments', 'namedValuesTemplate')]"
+      ]
     },
     {
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "[concat(parameters('LinkedTemplatesBaseUrl'), '/APIM-Base-products.template.json', parameters('LinkedTemplatesUrlQueryString'))]",
+          "uri": "[concat(parameters('LinkedTemplatesBaseUrl'), '/insprefixdevAPIM-products.template.json', parameters('LinkedTemplatesUrlQueryString'))]",
           "contentVersion": "1.0.0.0"
         },
         "parameters": {
@@ -104,13 +133,15 @@
       "name": "productsTemplate",
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2018-01-01",
-      "dependsOn": []
+      "dependsOn": [
+        "[resourceId('Microsoft.Resources/deployments', 'namedValuesTemplate')]"
+      ]
     },
     {
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "[concat(parameters('LinkedTemplatesBaseUrl'), '/APIM-Base-tags.template.json', parameters('LinkedTemplatesUrlQueryString'))]",
+          "uri": "[concat(parameters('LinkedTemplatesBaseUrl'), '/insprefixdevAPIM-backends.template.json', parameters('LinkedTemplatesUrlQueryString'))]",
           "contentVersion": "1.0.0.0"
         },
         "parameters": {
@@ -125,10 +156,47 @@
           }
         }
       },
-      "name": "tagTemplate",
+      "name": "backendsTemplate",
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2018-01-01",
-      "dependsOn": []
+      "dependsOn": [
+        "[resourceId('Microsoft.Resources/deployments', 'namedValuesTemplate')]"
+      ]
+    },
+    {
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[concat(parameters('LinkedTemplatesBaseUrl'), '/insprefixdevAPIM--echo-api-api.template.json', parameters('LinkedTemplatesUrlQueryString'))]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "ApimServiceName": {
+            "value": "[parameters('ApimServiceName')]"
+          },
+          "PolicyXMLBaseUrl": {
+            "value": "[parameters('PolicyXMLBaseUrl')]"
+          },
+          "PolicyXMLSasToken": {
+            "value": "[parameters('PolicyXMLSasToken')]"
+          },
+          "serviceUrl": {
+            "value": "[parameters('serviceUrl')]"
+          },
+          "ApiLoggerId": {
+            "value": "[parameters('ApiLoggerId')]"
+          }
+        }
+      },
+      "name": "apisTemplate",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2018-01-01",
+      "dependsOn": [
+        "[resourceId('Microsoft.Resources/deployments', 'namedValuesTemplate')]",
+        "[resourceId('Microsoft.Resources/deployments', 'globalServicePolicyTemplate')]",
+        "[resourceId('Microsoft.Resources/deployments', 'productsTemplate')]",
+        "[resourceId('Microsoft.Resources/deployments', 'backendsTemplate')]"
+      ]
     }
   ]
 }

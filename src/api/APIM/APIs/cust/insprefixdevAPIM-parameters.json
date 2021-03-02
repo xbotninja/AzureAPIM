@@ -3,7 +3,7 @@
   "contentVersion": "1.0.0.0",
   "parameters": {
     "ApimServiceName": {
-      "value": "basedevAPIM"
+      "value": "insprefixdevAPIM"
     },
     "LinkedTemplatesBaseUrl": {
       "value": "{{location}}{{query}}"
@@ -18,10 +18,15 @@
       "value": "{{query}}"
     },
     "serviceUrl": {
-      "value": {}
+      "value": {
+        "cust": null
+      }
     },
     "NamedValues": {
-      "value": {}
+      "value": {
+        "customersbackend": "https://insprefixcustomers.azurewebsites.net",
+        "customersChanged": "cust"
+      }
     },
     "ApiLoggerId": {
       "value": {}

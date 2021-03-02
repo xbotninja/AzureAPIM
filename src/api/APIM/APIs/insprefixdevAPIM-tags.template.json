@@ -15,25 +15,17 @@
   "resources": [
     {
       "properties": {
-        "displayName": "claims"
+        "displayName": "Customers"
       },
-      "name": "[concat(parameters('ApimServiceName'), '/claims')]",
+      "name": "[concat(parameters('ApimServiceName'), '/Customers')]",
       "type": "Microsoft.ApiManagement/service/tags",
       "apiVersion": "2019-01-01"
     },
     {
       "properties": {
-        "displayName": "dev"
+        "displayName": "WeatherForecast"
       },
-      "name": "[concat(parameters('ApimServiceName'), '/dev')]",
-      "type": "Microsoft.ApiManagement/service/tags",
-      "apiVersion": "2019-01-01"
-    },
-    {
-      "properties": {
-        "displayName": "policy"
-      },
-      "name": "[concat(parameters('ApimServiceName'), '/policy')]",
+      "name": "[concat(parameters('ApimServiceName'), '/WeatherForecast')]",
       "type": "Microsoft.ApiManagement/service/tags",
       "apiVersion": "2019-01-01"
     }

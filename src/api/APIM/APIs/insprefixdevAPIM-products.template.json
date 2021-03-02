@@ -84,7 +84,6 @@
     {
       "properties": {
         "description": "Subscribers have completely unlimited access to the API. Administrator approval is required.",
-        "terms": "Contoso Insurance terms of service.\n\n\nContoso APIs License and Guidelines......",
         "subscriptionRequired": true,
         "approvalRequired": true,
         "subscriptionsLimit": 1,
@@ -132,18 +131,6 @@
       },
       "name": "[concat(parameters('ApimServiceName'), '/unlimited/guests')]",
       "type": "Microsoft.ApiManagement/service/products/groups",
-      "apiVersion": "2019-01-01",
-      "dependsOn": [
-        "[resourceId('Microsoft.ApiManagement/service/products', parameters('ApimServiceName'), 'unlimited')]"
-      ]
-    },
-    {
-      "properties": {
-        "value": "[concat(parameters('PolicyXMLBaseUrl'), '/unlimited-productPolicy.xml', parameters('PolicyXMLSasToken'))]",
-        "format": "rawxml-link"
-      },
-      "name": "[concat(parameters('ApimServiceName'), '/unlimited/policy')]",
-      "type": "Microsoft.ApiManagement/service/products/policies",
       "apiVersion": "2019-01-01",
       "dependsOn": [
         "[resourceId('Microsoft.ApiManagement/service/products', parameters('ApimServiceName'), 'unlimited')]"

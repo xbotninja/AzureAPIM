@@ -2,10 +2,9 @@ trigger:
 - main
 
 variables:
-  newResourceGroupName: change_me
-  resourcePrefix: change_me
-  sqlAdministratorLoginPassword: $ometh1ngComp1ex!
-  apimPublisherEmail: change_me
+- group: 'CommonVariables'
+- name: newResourceGroupName
+  value: 'ENTER-RG-NAME-HERE'
 
 pool:
   vmImage: 'windows-latest'
@@ -23,6 +22,5 @@ steps:
     templateLocation: 'Linked artifact'
     csmFile: 'environment/armtemplate/template.json'
     csmParametersFile: 'environment/armtemplate/params.json'
-    overrideParameters: -resourcePrefix $(resourcePrefix) -sqlAdministratorLoginPassword $(sqlAdministratorLoginPassword) -apimPublisherEmail $(apimPublisherEmail)
     deploymentMode: 'Incremental'
 

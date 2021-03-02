@@ -1,7 +1,6 @@
 {
     "sourceApimName": "",
     "destinationApimName": "",
-    "baseFileName": "APIM-Base",
     "resourceGroup": "mondaydemo",
     "fileFolder": "./OverrideThisValue",
     "linkedTemplatesBaseUrl": "{{location}}{{query}}",
