@@ -3,9 +3,9 @@
 ```
 az login
 
-sourceRG="mondaydemo"
-sourceAPIMInstance="insprefixdevAPIM"
-destAPIMInstance="insprefixdevAPIM"
+sourceRG="tuesdayAPIM"
+sourceAPIMInstance="tuesapidevAPIM"
+destAPIMInstance="tuesapidevAPIM"
 
 ```
 
@@ -13,7 +13,7 @@ destAPIMInstance="insprefixdevAPIM"
 ```
 sharedTemplatesFolder="./SharedTemplates"
 
-echo "Extract shared template to: $sharedTemplatesFolder"
+echo "Extract shared template to: $sharedTemplatesFolder"    
 $HOME/.dotnet/tools/apim-templates extract --extractorConfig extractionConfig.json --fileFolder $sharedTemplatesFolder --sourceApimName $sourceAPIMInstance --destinationApimName $destAPIMInstance --resourceGroup $sourceRG
 
 echo "*********** Shared templates extracted ***********"
