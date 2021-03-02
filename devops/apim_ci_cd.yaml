@@ -3,7 +3,7 @@ trigger:
 
 variables:
 - name: serviceConnectionName
-  value: 'azurecon'
+  value: 'azureconnection'
 - name: poolVmImage
   value: 'ubuntu-latest'
 - name: storageAccountName
@@ -13,7 +13,7 @@ variables:
 - name: storageloc
   value: 'https://$(storageAccountName).blob.core.windows.net/$(storagecontainer)/build$(Build.BuildId)'
 - name: apimTemplatesLocation
-  value: './extract'
+  value: './SharedTemplates'
 
 
 
@@ -22,7 +22,7 @@ stages:
   displayName: Upload ARM templates
   variables:
     rgName: 'mondaydemo'
-    sourceAPIMName: 'insprefixdevAPIM'
+    sourceAPIMName: 'base-apim'
     destinationAPIMName: 'insprefixdevAPIM'
   jobs:
     - job: UploadARMTemplates
@@ -44,11 +44,11 @@ stages:
             az config set extension.use_dynamic_install=yes_without_prompt
 
             az storage blob directory upload -c $(storagecontainer) --account-name $(storageAccountName) -s "$(apimTemplatesLocation)/*" -d "build$(Build.BuildId)" --recursive
-          workingDirectory: $(Pipeline.Workspace)/s/src/api/APIM/commandline/
+          workingDirectory: $(Pipeline.Workspace)/s/src/api/APIM/
 
       - task: PublishPipelineArtifact@1
         inputs:
-          targetPath: '$(Pipeline.Workspace)/s/src/api/APIM/commandline'
+          targetPath: '$(Pipeline.Workspace)/s/src/api/APIM/'
           artifact: 'zip'
           publishLocation: 'pipeline'
 
@@ -58,7 +58,7 @@ stages:
   dependsOn: UploadARMTemplates
   variables:
     rgName: 'mondaydemo'
-    sourceAPIMName: 'insprefixdevAPIM'
+    sourceAPIMName: 'base-apim'
     destinationAPIMName: 'insprefixdevAPIM'
   jobs:
     - deployment: 'DeployDevAPIM'
@@ -107,7 +107,7 @@ stages:
   dependsOn: DeployToDev
   variables:
     rgName: 'mondaydemo'
-    sourceAPIMName: 'insprefixdevAPIM'
+    sourceAPIMName: 'base-apim'
     destinationAPIMName: 'insprefixprodAPIM'
   jobs:
     - deployment: 'DeployProdAPIM'
