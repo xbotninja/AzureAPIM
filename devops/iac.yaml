@@ -1,9 +1,14 @@
 trigger:
-- main
+  branches:
+      include:
+      - '*'  
+  paths:
+    include:
+    - environment
 
 variables:
-  newResourceGroupName: apimws
-  resourcePrefix: apimws
+  newResourceGroupName: apim
+  resourcePrefix: apimBase
   sqlAdministratorLoginPassword: ComplexPs123#$
   apimPublisherEmail: youremail@outlook.com
 
