@@ -1,0 +1,27 @@
+trigger:
+- main
+
+variables:
+  newResourceGroupName: apimws
+  resourcePrefix: apimws
+  sqlAdministratorLoginPassword: ComplexPs123#$
+  apimPublisherEmail: youremail@outlook.com
+
+pool:
+  vmImage: 'windows-latest'
+
+steps:
+
+- task: AzureResourceManagerTemplateDeployment@3
+  inputs:
+    deploymentScope: 'Resource Group'
+    azureResourceManagerConnection: 'azureconnection' 
+    action: 'Create Or Update Resource Group'
+    resourceGroupName: $(newResourceGroupName)
+    location: 'UK South'
+    templateLocation: 'Linked artifact'
+    csmFile: 'environment/armtemplate/template.json'
+    csmParametersFile: 'environment/armtemplate/params.json'
+    overrideParameters: -resourcePrefix $(resourcePrefix) -sqlAdministratorLoginPassword $(sqlAdministratorLoginPassword) -apimPublisherEmail $(apimPublisherEmail)
+    deploymentMode: 'Incremental'
+
