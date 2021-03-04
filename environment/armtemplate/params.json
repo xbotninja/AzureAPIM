@@ -3,7 +3,7 @@
     "contentVersion": "1.0.0.0",
     "parameters": {
       "resourcePrefix": { "value": "insprefix" },
-      "sqlAdministratorLoginPassword": { "value": "YourPasswordHere" },
+      "sqlAdministratorLoginPassword": { "value": "ComplexPs123#$" },
       "sqlAdministratorLogin": { "value": "SQLUser1" },
       "databaseName": { "value": "insurance" },
       "apimPublisherEmail": { "value": "youremail@outlook.com" },

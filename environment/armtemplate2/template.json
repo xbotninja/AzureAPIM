@@ -1,0 +1,233 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "resourcePrefix": { "type": "string", "metadata": { "description": "Resource name and prefix for all resources" }   },
+        "sqlAdministratorLogin": { "type": "string", "metadata": { "description": "The username of the admin user of the SQL Server" } },
+        "sqlAdministratorLoginPassword": { "type": "securestring", "metadata": { "description": "The password of the admin user of the SQL Server" } }, 
+        "databaseName": { "type": "string", "metadata": { "description": "The password of the admin user of the SQL Server" } },
+        "apimPublisherEmail": { "type": "string", "metadata": { "description": "Email address for APIM admin" } },
+        "apimPublisherName": { "type": "string", "metadata": { "description": "Name of APIM admin user" } },
+        "repoUrl": { "type": "string", "metadata": { "description": "Deploy customers api code from repo " } }
+    },
+    "variables": {
+        "linuxPlanName": "[concat(parameters('resourcePrefix'), 'linuxPlan')]",
+        "windowsPlanName": "[concat(parameters('resourcePrefix'), 'windowsPlan')]",
+        "customersAPI": "[concat(parameters('resourcePrefix'), 'customers')]",
+        "vaultName": "[concat(parameters('resourcePrefix'), 'vault')]",
+        "sqlserverName": "[concat(parameters('resourcePrefix'),'sqlserver')]",
+        "devAPIMInstanceName": "[concat(parameters('resourcePrefix'),'devAPIM')]",
+        "prodAPIMInstanceName": "[concat(parameters('resourcePrefix'),'prodAPIM')]"
+    },
+    "resources": 
+    [
+        {
+            "name": "[variables('sqlserverName')]",
+            "type": "Microsoft.Sql/servers",
+            "location": "[resourceGroup().location]",
+            "tags": {
+                "displayName": "SqlServer"
+            },
+            "apiVersion": "2020-02-02-preview",
+            "properties": {
+                "administratorLogin": "[parameters('sqlAdministratorLogin')]",
+                "administratorLoginPassword": "[parameters('sqlAdministratorLoginPassword')]",
+                "version": "12.0"
+            },
+            "resources": [
+                {
+                    "name": "[parameters('databaseName')]",
+                    "type": "databases",
+                    "location": "[resourceGroup().location]",
+                    "tags": {
+                        "displayName": "Database"
+                    },
+                    "apiVersion": "2020-02-02-preview",
+                    "dependsOn": [
+                        "[variables('sqlserverName')]"
+                    ],
+                    "properties": {
+                        "edition": "Basic",
+                        "collation": "SQL_Latin1_General_CP1_CI_AS",
+                        "maxSizeBytes": "1073741824",
+                        "requestedServiceObjectiveName": "Basic"
+                    },
+                    "resources": [
+                        {
+                            "type": "extensions",
+                            "apiVersion": "2014-04-01",
+                            "name": "Import",
+                            "dependsOn": [
+                                "[resourceId('Microsoft.Sql/servers/databases', variables('sqlserverName'), parameters('databaseName'))]"
+                            ],
+                            "properties": {
+                                "storageKeyType": "SharedAccessKey",
+                                "storageKey": "?sv=2019-12-12&ss=b&srt=co&sp=r&se=2023-02-08T20:17:13Z&st=2021-02-08T12:17:13Z&spr=https,http&sig=%2BI3tHqccmIp%2BFaloPCLsYYs6%2FscDw3fGKwo6aJgkX4A%3D",
+                                "storageUri": "https://adoworkshophelper.blob.core.windows.net/shared/insuance.bacpac",
+                                "administratorLogin": "[parameters('sqlAdministratorLogin')]",
+                                "administratorLoginPassword": "[parameters('sqlAdministratorLoginPassword')]",
+                                "operationMode": "Import"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "type": "firewallrules",
+                    "apiVersion": "2020-02-02-preview",
+                    "dependsOn": [
+                        "[variables('sqlserverName')]"
+                    ],
+                    "location": "[resourceGroup().location]",
+                    "name": "AllowAllWindowsAzureIps",
+                    "properties": {
+                        "endIpAddress": "0.0.0.0",
+                        "startIpAddress": "0.0.0.0"
+                    }
+                }
+            ]
+        },
+        {
+            "apiVersion": "2015-08-01",
+            "name": "[variables('linuxPlanName')]",
+            "type": "Microsoft.Web/serverfarms",
+            "location": "[resourceGroup().location]",
+            "tags": {
+                "displayName": "HostingPlan"
+            },
+            "sku": {
+                "name": "S1",
+                "capacity": 1
+            },
+            "properties": {
+                "name": "[variables('linuxPlanName')]"
+            }
+        },
+        {
+            "apiVersion": "2015-08-01",
+            "name": "[variables('customersAPI')]",
+            "type": "Microsoft.Web/sites",
+            "location": "[resourceGroup().location]",
+            "tags": {
+            "[concat('hidden-related:', resourceGroup().id, '/providers/Microsoft.Web/serverfarms/', variables('linuxPlanName'))]": "Resource",
+            "displayName": "Website"
+            },
+            "dependsOn": [
+            "[resourceId('Microsoft.Web/serverfarms/', variables('linuxPlanName'))]"
+            ],
+            "kind": "app",
+            "identity": {
+                "type": "SystemAssigned"
+            },
+            "properties": {
+                "name": "[variables('customersAPI')]",
+                "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', variables('linuxPlanName'))]",
+                "siteConfig": {
+                    "appSettings": [
+                        {
+                            "name": "ConnectionStrings:DefaultConnection",
+                            "value": "[concat('@Microsoft.KeyVault(SecretUri=', reference(resourceId('Microsoft.KeyVault/vaults/secrets', variables('vaultName'), 'SQLConnectionString')).secretUriWithVersion, ')')]"
+                        }
+                    ]
+                },
+                "resources": [
+                    {
+                      "condition": "[contains(parameters('repoUrl'),'http')]",
+                      "type": "sourcecontrols",
+                      "apiVersion": "2020-06-01",
+                      "name": "web",
+                      "location": "[resourceGroup().location]",
+                      "dependsOn": [
+                        "[resourceId('Microsoft.Web/sites', variables('customersAPI'))]"
+                      ],
+                      "properties": {
+                        "repoUrl": "[parameters('repoUrl')]",
+                        "branch": "master",
+                        "isManualIntegration": true
+                      }
+                    }
+                  ]    
+            }
+        },   
+        {
+            "type": "Microsoft.KeyVault/vaults",
+            "name": "[variables('vaultName')]",
+            "apiVersion": "2016-10-01",
+            "location": "[resourceGroup().location]",
+            "properties": {
+                "sku": {
+                    "family": "A",
+                    "name": "standard"
+                },
+                "tenantId": "[subscription().tenantId]",
+                "accessPolicies": [
+                    
+                ],
+                "enabledForTemplateDeployment": true
+            }
+        },
+        {
+            "type": "Microsoft.KeyVault/vaults/accessPolicies",
+            "name": "[concat(variables('vaultName'), '/add')]",
+            "apiVersion": "2018-02-14",
+            "properties": {
+                "accessPolicies": [
+                    {
+                        "tenantId": "[reference(concat('Microsoft.Web/sites/', variables('customersAPI')), '2020-06-01', 'Full').identity.tenantId]",
+                        "objectId": "[reference(concat('Microsoft.Web/sites/', variables('customersAPI')), '2020-06-01', 'Full').identity.principalId]",
+                        "permissions": {
+                            "keys": [],
+                            "secrets": [
+                                "get",
+                                "list"
+                            ],
+                            "certificates": []
+                        }
+                    }
+                ]
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', variables('customersAPI'))]"
+            ]
+        },
+        {
+            "type": "Microsoft.KeyVault/vaults/secrets",
+            "name": "[concat(variables('vaultName'), '/SQLConnectionString')]",
+            "apiVersion": "2016-10-01",
+            "location": "[resourceGroup().location]",
+            "properties": {
+                "contentType": "text/plain",
+                "value": "[concat('Server=tcp:', reference(resourceId('Microsoft.Sql/servers/', variables('sqlserverName'))).fullyQualifiedDomainName, ',1433;Initial Catalog=', parameters('databaseName'), ';User Id=', parameters('sqlAdministratorLogin'), '@', reference(resourceId('Microsoft.Sql/servers/', variables('sqlserverName'))).fullyQualifiedDomainName, ';Password=', parameters('sqlAdministratorLoginPassword'), ';MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30')]"
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.KeyVault/vaults', variables('vaultName'))]"
+            ]
+        },
+        {
+            "type": "Microsoft.KeyVault/vaults/secrets",
+            "name": "[concat(variables('vaultName'), '/customersAPIName')]",
+            "apiVersion": "2016-10-01",
+            "location": "[resourceGroup().location]",
+            "properties": {
+                "contentType": "text/plain",
+                "value": "[variables('customersAPI')]"
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.KeyVault/vaults', variables('vaultName'))]"
+            ]
+        },
+        {
+            "type": "Microsoft.KeyVault/vaults/secrets",
+            "name": "[concat(variables('vaultName'), '/resourceGroupName')]",
+            "apiVersion": "2016-10-01",
+            "location": "[resourceGroup().location]",
+            "properties": {
+                "contentType": "text/plain",
+                "value": "[variables('customersAPI')]"
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.KeyVault/vaults', variables('vaultName'))]"
+            ]
+        }
+    ]
+  }
+

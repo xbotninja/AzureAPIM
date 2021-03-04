@@ -1,0 +1,13 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+      "resourcePrefix": { "value": "insprefix" },
+      "sqlAdministratorLoginPassword": { "value": "ComplexPs123#$" },
+      "sqlAdministratorLogin": { "value": "SQLUser1" },
+      "databaseName": { "value": "insurance" },
+      "apimPublisherEmail": { "value": "youremail@outlook.com" },
+      "apimPublisherName": { "value": "APIM Admin User" },
+      "repoUrl": { "value": "https://github.com/s-leonard/AzureAPIM.git" }
+    }
+  }
