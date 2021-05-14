@@ -1,0 +1,19 @@
+apiVersion : apps/v1
+kind: Deployment
+metadata:
+  name: xbotninjaazureapim 
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: xbotninjaazureapim
+  template:
+    metadata:
+      labels:
+        app: xbotninjaazureapim 
+    spec:
+      containers:
+        - name: xbotninjaazureapim 
+          image: hypxcicdacr.azurecr.io/xbotninjaazureapim
+          ports:
+          - containerPort: 80
